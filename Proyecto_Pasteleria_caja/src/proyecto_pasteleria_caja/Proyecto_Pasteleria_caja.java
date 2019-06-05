@@ -74,7 +74,7 @@ public class Proyecto_Pasteleria_caja {
                     }
                     break;
                 case 3:
-                    new BBDD().setVisible(true);
+                    new BBDD().setVisible(true); /* Llamada al frame de administracion de la base de datos */
                     break;
                 case 4:
                     salir = true;

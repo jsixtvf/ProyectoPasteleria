@@ -8,20 +8,15 @@ package proyecto_pasteleria_caja;
 //import java.awt.Button;
 import java.awt.event.ActionEvent;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-//import java.text.SimpleDateFormat;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import proyecto_pasteleria_caja.ConexionGUIMySQL;
 
 /**
  *
@@ -223,7 +218,7 @@ public class BBDD extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String buttonText = PadreEvento(evt); // METODO QUE MIRA EN EL TEXT DEL BUTTON.                  
-        insertarCliente(buttonText);
+        insertarCliente(buttonText); // Los metodos reciben el nombre de los botones
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -365,16 +360,18 @@ public class BBDD extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void pintar(String buttonText) {
-        String[] titols = null;
+        String[] titols = null; /** Auxiliar de las cabeceras a mostrar en la tabla*/
 
         String[] titolsC = {"NIF", "Nombre", "Apellido1", "Apellido2", "Fecha_nacimiento", "Telefono", "Genero", "direccion", "localidad", "C.P."};
         String[] titolsP = {"NIF", "Nombre", "Telefono", "Direccion", "Localidad", "C.P.", "Actividad"};
         String[] titolsE = {"NIF_empleado", "Nombre_empleado", "Primer apellido", "Segundo apellido", "Genero", "Correo electronico", "Telefono", "Departamento"};
-
+        /* Se definen las cabeceras para cada tabla */
         int numero_cabeceras = 0;
         String vSQL = new String();
 
-        switch (buttonText) {
+        switch (buttonText) { /** Segun el nombre del boton con este switch decidimos que numero de cabeceras tiene la tabla
+            que cabeceras mostramos asignando al auxiliar y que select queremos
+            */
 
             case "cliente":
                 numero_cabeceras = 11;
@@ -396,17 +393,17 @@ public class BBDD extends javax.swing.JFrame {
 
         }
 
-        Object[] registro = new Object[numero_cabeceras];
+        Object[] registro = new Object[numero_cabeceras]; /** Array de object que guarda los valores de la query */
 
-        modelo = new DefaultTableModel(null, titols);
+        modelo = new DefaultTableModel(null, titols); /** Generar el objeto tabla */
 
         try {
 
-            if (buttonText.equals("cliente")) {
+            if (buttonText.equals("cliente")) { /** Ejecutar la query y recoge los valores */
                 Statement st = cn.createStatement();
                 ResultSet rs = st.executeQuery(vSQL);
 
-                while (rs.next()) {
+                while (rs.next()) { /** Recorremos el resultset y asignamos al array de objetos registro*/
 
                     registro[0] = rs.getString("NIF_cliente");
                     registro[1] = rs.getString("nombre_cliente");
@@ -419,7 +416,7 @@ public class BBDD extends javax.swing.JFrame {
                     registro[8] = rs.getString("localidad");
                     registro[9] = rs.getString("codigo_postal");
 
-                    modelo.addRow(registro);
+                    modelo.addRow(registro); /** cada posicion del registro es un campo que insertamos como una fila que los contiene*/
                 }
             }
 
@@ -461,26 +458,30 @@ public class BBDD extends javax.swing.JFrame {
 
             }
 
-            jTable1.setModel(modelo);
+            jTable1.setModel(modelo); /** Finalmente de una pieza al modelo tabla le insertamos la cuadricula de filas y columnas */
             //cn.close();
 
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, ex);
+            JOptionPane.showMessageDialog(null, ex); /** Muestra un mensaje de error */
         }
     }
 
     private void borrar(String buttonText) {
 
-        int filaSel = jTable1.getSelectedRow();
-        if (filaSel == -1) {
+        int filaSel = jTable1.getSelectedRow(); /** Este metodo permite guardar donde hemos seleccioado
+         * 
+         * la fila de la tabla */
+        if (filaSel == -1) { /** Y si es el valor -1 significa que no se ha seleccionado ninguna fila */
             JOptionPane.showMessageDialog(this, "No has seleccionado una fila");
         } else {
 
-            String clave_primaria = (String) jTable1.getValueAt(filaSel, 0);
+            String clave_primaria = (String) jTable1.getValueAt(filaSel, 0); /** Casteamos la posicion cero de la fila seleccionada, que corresponde
+             * a la clave primaria.
+             */
 
             String vSQL = new String();
 
-            if (buttonText.equals("cliente")) {
+            if (buttonText.equals("cliente")) { /** Decidimos aqui que query aplicar */
 
                 vSQL = "DELETE FROM Clientes WHERE NIF_cliente='" + clave_primaria + "';";
 
@@ -497,7 +498,7 @@ public class BBDD extends javax.swing.JFrame {
             try {
                 Statement st = cn.createStatement();
                 st.executeUpdate(vSQL);
-                pintar(buttonText);
+                pintar(buttonText); /** Aplicamos el mismo metodo de mostrar resultados en la tabla para actualizarla y poder ver los cambios */
 
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, ex);
@@ -506,11 +507,13 @@ public class BBDD extends javax.swing.JFrame {
         }
     }
 
-    private String PadreEvento(ActionEvent evt) {
+    private String PadreEvento(ActionEvent evt) { /** Este metodo obtiene la fuente del evento */
         Object sce = evt.getSource();
         String buttonText = null;
-        if (sce instanceof JButton) {  //check that the source is really a button
-            buttonText = ((JButton) sce).getText();
+        if (sce instanceof JButton) { /** Comprobamos si esta fuente es heredada de JButton */
+            
+            //check that the source is really a button
+            buttonText = ((JButton) sce).getText(); /**  Y finalmente casteamos a String la fuente */
             //System.out.println(buttonText);
         }
 
@@ -518,6 +521,9 @@ public class BBDD extends javax.swing.JFrame {
     }
 
     private void insertarCliente(String buttonText) {
+        /** Metodo de insertar a la base de datos, creamos una prepareStatement pidiendo mediante una ventana modal al usuario, que valor
+        quiere darle a cada item, cada campo de la tabla en este caso, tabla Cliente.
+        */
 
         String vSQL = new String();
 
@@ -531,7 +537,7 @@ public class BBDD extends javax.swing.JFrame {
             String nif = JOptionPane.showInputDialog(this, "Introduce un nif");
             ps.setString(1, nif);
 
-            // TRAS INSERTAR LA CLAVE NIF COMPROBAMOS SI YA EXISTE
+            /** TRAS INSERTAR LA CLAVE NIF COMPROBAMOS SI YA EXISTE */
             boolean claveEncontrada = buscarClavePrimaria(buttonText, nif);
 
             // PREPARE STATEMENTS
@@ -549,13 +555,20 @@ public class BBDD extends javax.swing.JFrame {
             // Tratamiento de fechas
             try {
                 //(java.sql.Date)
+                
+                /**
+                * Formateamos el string que recibimos de la ventana modal para una variable Date
+                * y de esta obtenemos fecha con getTime que pasa por parametro a un objeto sql date
+                * que si podremos setear para el insert
+                */
                 java.util.Date fecha_nacimiento = new SimpleDateFormat("dd/MM/yyyy").parse(fechaNacimiento_str);
 
                 java.sql.Date fecha_nacimiento_sql = new java.sql.Date(fecha_nacimiento.getTime());
-                System.out.println(fecha_nacimiento);
+                
                 ps.setDate(5, fecha_nacimiento_sql);
             } catch (ParseException ex) {
-                System.out.println("Error de conversion a sql date" + ex.getMessage());
+                System.out.println("Error de conversion a sql date" + ex.getMessage()); /**
+                 * Mostramos la posible excepcion de convertir a sql date */
             }
 
             String telefono = JOptionPane.showInputDialog(this, "Introduce telefono");
@@ -573,7 +586,8 @@ public class BBDD extends javax.swing.JFrame {
             String codigo_postal = JOptionPane.showInputDialog(this, "Introduce codigo postal");
             ps.setString(10, codigo_postal);
 
-            if (claveEncontrada == false) {
+            if (claveEncontrada == false) { /** Solo si no encuentra la clave permitimos el insert */
+             
                 ps.executeUpdate();
                 pintar(buttonText);
             } else {
@@ -587,7 +601,7 @@ public class BBDD extends javax.swing.JFrame {
 
     }
 
-    private void insertarProveedor(String buttonText) {
+    private void insertarProveedor(String buttonText) { /** idem a insertarCliente salvo el tratamiento de fecha*/
 
         String vSQL = new String();
 
@@ -637,7 +651,7 @@ public class BBDD extends javax.swing.JFrame {
 
     }
 
-    private void insertarEmpleado(String buttonText) {
+    private void insertarEmpleado(String buttonText) { /** idem a insertar proveedor */
 
         String vSQL = new String();
 
@@ -751,7 +765,10 @@ public class BBDD extends javax.swing.JFrame {
             // CONTENIDO DEL WHERE
             ps.setString(11, nif);
 
-            if (claveEncontrada == true) {
+            if (claveEncontrada == true) { 
+                /** 
+                 * 
+                 * La particularidad aqui es que si no encuentra la clave primaria no hace la actualizacion */
                 ps.executeUpdate();
                 pintar(buttonText);
             } else {
@@ -836,7 +853,10 @@ public class BBDD extends javax.swing.JFrame {
             String nif = JOptionPane.showInputDialog(this, "Introduce un nif");
             ps.setString(1, nif);
 
-            // TRAS INSERTAR LA CLAVE NIF COMPROBAMOS SI YA EXISTE
+            /** 
+             * Tras insertar la clave nif comprobamos si ya existe.
+             * Este metodo lo hemos utilizado en cada query
+             */
             boolean claveEncontrada = buscarClavePrimaria(buttonText, nif);
 
             // PREPARE STATEMENTS
@@ -877,7 +897,7 @@ public class BBDD extends javax.swing.JFrame {
         }
 
     }
-
+/** Buscar clave primaria es el metodo que seleccionamos la clave primaria */
     public boolean buscarClavePrimaria(String buttonText, String clave) {
         String vSQL;
         boolean existeClave = false;
@@ -896,7 +916,7 @@ public class BBDD extends javax.swing.JFrame {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(vSQL);
 
-            while (rs.next()) {
+            while (rs.next()) { /** Comprobamos si entra en el bucle, en caso de no hacerlo nunca se setea el booleano existeClave a true */
                 existeClave = true;
             }
 
@@ -904,7 +924,11 @@ public class BBDD extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, ex);
         }
 
-        return existeClave;
+        return existeClave; 
+        /** Devolvemos el booleano, dependiendo de su valor true o 
+         * false nos es util para determinar si se puede hacer un insert o un update
+         * son logicas opuestas de hecho
+         * */
 
     }
 }
