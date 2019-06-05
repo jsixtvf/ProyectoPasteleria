@@ -35,7 +35,8 @@ public class Proyecto_Pasteleria_caja {
             
             System.out.println("1. Introducir productos");
             System.out.println("2. Imprimir Factura");
-            System.out.println("3. Finalizar aplicacion");
+            System.out.println("3. Abrir DD.BB.");
+            System.out.println("4. Finalizar aplicacion");
             System.out.print("¿Que opción desea?: ");
             int opcion = 0;
             Caja caja = null;
@@ -73,6 +74,9 @@ public class Proyecto_Pasteleria_caja {
                     }
                     break;
                 case 3:
+                    new BBDD().setVisible(true);
+                    break;
+                case 4:
                     salir = true;
                     break;
                 default:
