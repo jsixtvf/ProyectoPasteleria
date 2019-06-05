@@ -1,0 +1,20 @@
+-----------------------------------------
+
+Nombre: Pa de Sucre 
+Domicilio: calle Isabel II número 7, Soller 
+Telefono: 971 36 37 85 
+Nº factura: 1
+
+-----------------------------------------
+
+
+--------Juan Sixto--------
+Primer apellido: Vera
+Segundo apellido: Fernandez
+CIF/DNI: 43160196Y
+Correo: sixto-vera@outlook.com
+Numero telefono: 625512778
+Producto: Tarta
+Base imponible: 12.00 €
+IVA (10%): 0.63 €
+Total: 3.63 €
